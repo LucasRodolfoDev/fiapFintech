@@ -13,7 +13,7 @@
                     <a class="nav-link" href="cadastrar-cliente.jsp">Cadastro de Cliente</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="clientes">Listar Clientes</a>
+                    <a class="nav-link" href="clientes?acao=listar">Listar Clientes</a>
                 </li>
 <%--                <li class="nav-item">--%>
 <%--                    <a class="nav-link" href="#">Contas</a>--%>

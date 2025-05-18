@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
 <%@ page import="br.com.matheuscarino.fiapfintech.model.Cliente" %>
-<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -67,7 +69,6 @@
                 </div>
         <%
             } else {
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         %>
                 <table>
                     <thead>
@@ -80,21 +81,32 @@
                             <th>Endereço</th>
                             <th>Data de Nascimento</th>
                             <th>Status</th>
+                            <th>Editar</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (Cliente cliente : clientes) { %>
+                        <c:forEach items="${clientes}" var="cliente">
                             <tr>
-                                <td><%= cliente.getId() %></td>
-                                <td><%= cliente.getNome() %></td>
-                                <td><%= cliente.getCpf() %></td>
-                                <td><%= cliente.getEmail() %></td>
-                                <td><%= cliente.getTelefone() %></td>
-                                <td><%= cliente.getEndereco() %></td>
-                                <td><%= cliente.getDataNascimento().format(dateFormatter) %></td>
-                                <td><%= cliente.getStatus() ? "Ativo" : "Inativo" %></td>
+                                <td>${cliente.id}</td>
+                                <td>${cliente.nome}</td>
+                                <td>${cliente.cpf}</td>
+                                <td>${cliente.email}</td>
+                                <td>${cliente.telefone}</td>
+                                <td>${cliente.endereco}</td>
+                                <td>${cliente.dataNascimento}</td>
+                                <td>${cliente.status ? 'Ativo' : 'Inativo'}</td>
+                                <td class="text-center">
+                                    <c:url value="clientes" var="link">
+                                        <c:param name="acao" value="abrir-form-edicao"/>
+                                        <c:param name="id" value="${cliente.id}"/>
+                                    </c:url>
+                                    <a href="${link}" class="btn btn-primary">
+                                        <i class="bi bi-pencil-square">Editar</i>
+
+                                    </a>
+                                </td>
                             </tr>
-                        <% } %>
+                        </c:forEach>
                     </tbody>
                 </table>
         <%
