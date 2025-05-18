@@ -16,8 +16,14 @@
 <div class="container mt-4">
   <h2>Cadastrar Cliente</h2>
   <c:if test="${not empty mensagem}">
-    <div class="alert alert-${tipoMensagem} alert-dismissible fade show" role="alert">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
       ${mensagem}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </c:if>
+  <c:if test="${not empty erro}">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      ${erro}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   </c:if>
@@ -48,7 +54,8 @@
     </div>
     <div class="mb-3">
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="status" name="status" checked>
+        <input type="hidden" name="status" value="false">
+        <input class="form-check-input" type="checkbox" id="status" name="status" value="true" checked>
         <label class="form-check-label" for="status">
           Cliente Ativo
         </label>

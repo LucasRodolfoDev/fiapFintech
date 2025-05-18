@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import br.com.matheuscarino.fiapfintech.exception.DBException;
 import br.com.matheuscarino.fiapfintech.factory.DaoFactory;
+import java.util.List;
 
 import java.io.IOException;
 
@@ -48,6 +49,17 @@ public class ClienteServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        
+        try {
+            System.out.println("Iniciando listagem de clientes...");
+            List<Cliente> clientes = dao.listar();
+            System.out.println("Número de clientes encontrados: " + (clientes != null ? clientes.size() : 0));
+            req.setAttribute("clientes", clientes);
+            req.getRequestDispatcher("listar-clientes.jsp").forward(req, resp);
+        } catch (DBException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao listar clientes: " + e.getMessage());
+            req.setAttribute("erro", "Erro ao listar clientes: " + e.getMessage());
+            req.getRequestDispatcher("listar-clientes.jsp").forward(req, resp);
+        }
     }
 }

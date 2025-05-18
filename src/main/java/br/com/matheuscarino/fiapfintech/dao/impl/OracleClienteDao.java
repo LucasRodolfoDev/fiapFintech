@@ -164,10 +164,15 @@ public class OracleClienteDao implements ClienteDao {
         List<Cliente> lista = new ArrayList<>();
 
         try {
+            System.out.println("Obtendo conexão com o banco de dados...");
             conexao = ConnectionManager.getInstance().getConnection();
+            System.out.println("Conexão obtida com sucesso");
+            
             String sql = "SELECT * FROM FINTECH_CLIENTES ORDER BY ID";
+            System.out.println("Executando query: " + sql);
             stmt = conexao.prepareStatement(sql);
             rs = stmt.executeQuery();
+            System.out.println("Query executada com sucesso");
 
             while (rs.next()) {
                 Cliente cliente = new Cliente();
@@ -180,9 +185,12 @@ public class OracleClienteDao implements ClienteDao {
                 cliente.setDataNascimento(rs.getDate("DATA_NASCIMENTO").toLocalDate());
                 cliente.setStatus(rs.getBoolean("STATUS"));
                 lista.add(cliente);
+                System.out.println("Cliente adicionado à lista: " + cliente.getNome());
             }
+            System.out.println("Total de clientes encontrados: " + lista.size());
 
         } catch (SQLException e) {
+            System.out.println("Erro SQL ao listar clientes: " + e.getMessage());
             throw new DBException("Erro ao listar todos os clientes", e);
         } finally {
             try {
@@ -190,7 +198,6 @@ public class OracleClienteDao implements ClienteDao {
                 if (stmt != null) stmt.close();
                 if (conexao != null) conexao.close();
                 System.out.println("Conexão e recursos fechados");
-                System.out.println("Clientes listados com sucesso");
             } catch (SQLException e) {
                 e.printStackTrace();
             }

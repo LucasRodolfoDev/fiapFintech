@@ -16,6 +16,8 @@
 <body>
     <%@ include file="header.jsp" %>
 
+    <h1>Bem-vindo ao sistema de contas</h1>
+    
     <%
     // Criando um objeto para simular os dados da conta
     java.util.Map<String, Object> conta = new java.util.HashMap<>();
