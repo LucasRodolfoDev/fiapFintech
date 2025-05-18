@@ -15,7 +15,13 @@
 
 <div class="container mt-4">
   <h2>Cadastrar Cliente</h2>
-  <form action="cadastrarCliente" method="post">
+  <c:if test="${not empty mensagem}">
+    <div class="alert alert-${tipoMensagem} alert-dismissible fade show" role="alert">
+      ${mensagem}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </c:if>
+  <form action="clientes" method="post">
     <div class="mb-3">
       <label for="nome" class="form-label">Nome</label>
       <input type="text" class="form-control" id="nome" name="nome" required>
@@ -31,6 +37,22 @@
     <div class="mb-3">
       <label for="telefone" class="form-label">Telefone</label>
       <input type="text" class="form-control" id="telefone" name="telefone">
+    </div>
+    <div class="mb-3">
+      <label for="endereco" class="form-label">Endereço</label>
+      <input type="text" class="form-control" id="endereco" name="endereco" required>
+    </div>
+    <div class="mb-3">
+      <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+      <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" required>
+    </div>
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="status" name="status" checked>
+        <label class="form-check-label" for="status">
+          Cliente Ativo
+        </label>
+      </div>
     </div>
     <button type="submit" class="btn btn-primary">Cadastrar</button>
   </form>
