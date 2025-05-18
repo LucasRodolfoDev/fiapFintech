@@ -51,6 +51,9 @@
     <%@ include file="header.jsp" %>
     <div class="container">
         <h1>Lista de Clientes</h1>
+        
+
+
         <%
             List<Cliente> clientes = (List<Cliente>) request.getAttribute("clientes");
             String erro = (String) request.getAttribute("erro");
@@ -82,6 +85,7 @@
                             <th>Data de Nascimento</th>
                             <th>Status</th>
                             <th>Editar</th>
+                            <th>Remover</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -102,8 +106,12 @@
                                     </c:url>
                                     <a href="${link}" class="btn btn-primary">
                                         <i class="bi bi-pencil-square">Editar</i>
-
                                     </a>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#excluirModal" onclick="setIdExcluir(${cliente.id})">
+                                        <i class="bi bi-trash">Remover</i>
+                                    </button>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -113,6 +121,37 @@
             }
         %>
     </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal fade" id="excluirModal" tabindex="-1" aria-labelledby="modalConfirmacaoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmacaoLabel">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza que deseja excluir este cliente?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form action="clientes" method="post">
+                        <input type="hidden" name="acao" value="remover">
+                        <input type="hidden" name="id" id="idExcluir" value="">
+                        <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <%@ include file="footer.jsp" %>
+    
+    <script src="${pageContext.request.contextPath}/resources/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function setIdExcluir(id) {
+            document.getElementById('idExcluir').value = id;
+        }
+    </script>
 </body>
 </html>

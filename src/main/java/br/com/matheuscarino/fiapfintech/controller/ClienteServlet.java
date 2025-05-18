@@ -40,6 +40,9 @@ public class ClienteServlet extends HttpServlet {
             case "editar":
                 editar(req, resp);
                 break;
+            case "remover":
+                remover(req, resp);
+                break;
         }
     }
 
@@ -82,6 +85,18 @@ public class ClienteServlet extends HttpServlet {
         } catch (DBException e) {
             e.printStackTrace();
             req.setAttribute("erro", "Erro ao atualizar cliente");
+        }
+        listar(req, resp);
+    }
+
+    private void remover(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        try {
+            dao.remover(id);
+            req.setAttribute("mensagem", "Cliente removido com sucesso");
+        } catch (DBException e) {
+            e.printStackTrace();
+            req.setAttribute("erro", "Erro ao remover cliente");
         }
         listar(req, resp);
     }
