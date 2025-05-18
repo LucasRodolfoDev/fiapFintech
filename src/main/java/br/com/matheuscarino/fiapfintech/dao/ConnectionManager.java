@@ -14,19 +14,30 @@ public class ConnectionManager {
     private static final String URL = dotenv.get("DB_URL");
     private static final String USER = dotenv.get("DB_USER"); 
     private static final String PASSWORD = dotenv.get("DB_PASSWORD");
+
+    private static ConnectionManager connectionManager;
+
+    public static ConnectionManager getInstance() {
+        if (connectionManager == null) {
+            connectionManager = new ConnectionManager();
+        }
+        return connectionManager;
+    }
+
     private static Connection connection;
 
     private ConnectionManager() {}
 
-    public static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
             try {
                 System.out.println("Tentando conectar ao banco de dados...");
-                System.out.println("URL: " + URL);
-                System.out.println("USER: " + USER);
+                // System.out.println("URL: " + URL);
+                // System.out.println("USER: " + USER);
                 
                 Class.forName("oracle.jdbc.driver.OracleDriver");
                 connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                System.out.println("Conexão estabelecida com sucesso");
             } catch (ClassNotFoundException e) {
                 throw new SQLException("Driver Oracle JDBC não encontrado", e);
             } catch (SQLException e) {
