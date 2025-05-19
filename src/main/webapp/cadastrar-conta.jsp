@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
@@ -16,7 +15,20 @@
 
 <div class="container mt-4">
   <h2>Cadastrar Conta</h2>
-  <form action="cadastrarConta" method="post">
+  <c:if test="${not empty mensagem}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      ${mensagem}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </c:if>
+  <c:if test="${not empty erro}">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      ${erro}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </c:if>
+  <form action="contas" method="post">
+    <input type="hidden" name="acao" value="cadastrar">
     <div class="mb-3">
       <label for="cliente" class="form-label">Cliente</label>
       <select class="form-select" id="cliente" name="clienteId" required>
@@ -26,19 +38,23 @@
       </select>
     </div>
     <div class="mb-3">
-      <label for="agencia" class="form-label">Agência</label>
-      <input type="text" class="form-control" id="agencia" name="agencia" required>
-    </div>
-    <div class="mb-3">
-      <label for="numero" class="form-label">Número da Conta</label>
-      <input type="text" class="form-control" id="numero" name="numero" required>
-    </div>
-    <div class="mb-3">
       <label for="tipo" class="form-label">Tipo de Conta</label>
       <select class="form-select" id="tipo" name="tipo" required>
-        <option value="Corrente">Corrente</option>
-        <option value="Poupança">Poupança</option>
+        <option value="1">Corrente</option>
+        <option value="2">Poupança</option>
       </select>
+    </div>
+    <div class="mb-3">
+      <label for="saldo" class="form-label">Saldo Inicial</label>
+      <input type="number" step="0.01" class="form-control" id="saldo" name="saldo" value="0.00" required>
+    </div>
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="status" name="status" value="1" checked>
+        <label class="form-check-label" for="status">
+          Conta Ativa
+        </label>
+      </div>
     </div>
     <button type="submit" class="btn btn-primary">Cadastrar</button>
   </form>
