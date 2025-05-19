@@ -33,7 +33,7 @@ public class OracleClienteDao implements ClienteDao {
             stmt.setString(4, cliente.getTelefone());
             stmt.setString(5, cliente.getEndereco());
             stmt.setDate(6, Date.valueOf(cliente.getDataNascimento()));
-            stmt.setBoolean(7, cliente.getStatus());
+            stmt.setInt(7, cliente.isStatus() ? 1 : 0);
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -66,7 +66,7 @@ public class OracleClienteDao implements ClienteDao {
             stmt.setString(4, cliente.getTelefone());
             stmt.setString(5, cliente.getEndereco());
             stmt.setDate(6, Date.valueOf(cliente.getDataNascimento()));
-            stmt.setBoolean(7, cliente.getStatus());
+            stmt.setInt(7, cliente.isStatus() ? 1 : 0);
             stmt.setLong(8, cliente.getId());
             stmt.executeUpdate();
 

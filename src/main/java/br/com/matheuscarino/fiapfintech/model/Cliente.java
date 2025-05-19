@@ -10,11 +10,11 @@ public class Cliente {
     private String telefone;
     private String endereco;
     private LocalDate dataNascimento;
-    private Boolean status;
+    private boolean status;
 
     public Cliente() {}
 
-    public Cliente(String nome, String cpf, String email, String telefone, String endereco, LocalDate dataNascimento, Boolean status) {
+    public Cliente(String nome, String cpf, String email, String telefone, String endereco, LocalDate dataNascimento, boolean status) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
@@ -80,11 +80,11 @@ public class Cliente {
         this.dataNascimento = dataNascimento;
     }
 
-    public Boolean getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 }

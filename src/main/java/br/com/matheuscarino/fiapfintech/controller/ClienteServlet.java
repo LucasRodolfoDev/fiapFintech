@@ -53,7 +53,7 @@ public class ClienteServlet extends HttpServlet {
         String telefone = req.getParameter("telefone");
         String endereco = req.getParameter("endereco");
         LocalDate dataNascimento = LocalDate.parse(req.getParameter("dataNascimento"));
-        boolean status = Boolean.parseBoolean(req.getParameter("status"));
+        boolean status = "1".equals(req.getParameter("status"));
 
         Cliente cliente = new Cliente(nome, cpf, email, telefone, endereco, dataNascimento, status);
         try {
@@ -75,7 +75,7 @@ public class ClienteServlet extends HttpServlet {
         String telefone = req.getParameter("telefone");
         String endereco = req.getParameter("endereco");
         LocalDate dataNascimento = LocalDate.parse(req.getParameter("dataNascimento"));
-        boolean status = Boolean.parseBoolean(req.getParameter("status"));
+        boolean status = "1".equals(req.getParameter("status"));
 
         Cliente cliente = new Cliente(nome, cpf, email, telefone, endereco, dataNascimento, status);
         cliente.setId(id);

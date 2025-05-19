@@ -54,8 +54,7 @@
     </div>
     <div class="mb-3">
       <div class="form-check">
-        <input type="hidden" name="status" value="false">
-        <input class="form-check-input" type="checkbox" id="status" name="status" value="true" checked>
+        <input class="form-check-input" type="checkbox" id="status" name="status" value="1" checked>
         <label class="form-check-label" for="status">
           Cliente Ativo
         </label>
