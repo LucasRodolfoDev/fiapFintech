@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-dark navbar-expand-lg bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="index.jsp">FINTECH - HOME</a>
 <%--        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent">--%>
@@ -18,8 +18,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="clientes?acao=listar">Listar Clientes</a>
                 </li>
-
             </ul>
+            <form action="login" method="post" class="d-flex ms-auto">
+                <input type="email" name="email" placeholder="Email" class="form-control me-2">
+                <input type="password" name="senha" placeholder="Senha" class="form-control me-2">
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
         </div>
     </div>
 </nav>
