@@ -7,17 +7,28 @@ import java.security.NoSuchAlgorithmException;
 
 public class Usuario {
 
+    private Long id;
     private String email;
     private String senha;
+    private String tipoUsuario;
 
-    public Usuario(String email, String senha) {
+    public Usuario(String email, String senha, String tipoUsuario) {
         super();
         this.email = email;
+        this.tipoUsuario = tipoUsuario;
         setSenha(senha);
     }
 
     public Usuario() {
         super();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -38,6 +49,13 @@ public class Usuario {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public String getTipoUsuario() {
+        return tipoUsuario;
+    }
+
+    public void setTipoUsuario(String tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
     }
 }

@@ -34,7 +34,7 @@ public class LoginServlet extends HttpServlet {
 
         System.out.println("Tentativa de login - Email: " + email);
 
-        Usuario usuario = new Usuario(email, senha);
+        Usuario usuario = new Usuario(email, senha, "cliente");
 
         if (dao.validarUsuario(usuario)) {
             System.out.println("Login bem-sucedido para: " + email);

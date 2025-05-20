@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <nav class="navbar navbar-dark navbar-expand-lg bg-dark">
     <div class="container-fluid">
@@ -18,6 +19,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="clientes?acao=listar">Listar Clientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="cadastrar-usuario.jsp">Cadastro de Usuário</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="usuarios?acao=listar">Listar Usuários</a>
                 </li>
             </ul>
             <div class="ms-auto">

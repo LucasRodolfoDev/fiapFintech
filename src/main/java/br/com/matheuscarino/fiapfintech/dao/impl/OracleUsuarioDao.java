@@ -2,12 +2,15 @@ package br.com.matheuscarino.fiapfintech.dao.impl;
 
 import br.com.matheuscarino.fiapfintech.dao.ConnectionManager;
 import br.com.matheuscarino.fiapfintech.dao.UsuarioDao;
+import br.com.matheuscarino.fiapfintech.exception.DBException;
 import br.com.matheuscarino.fiapfintech.model.Usuario;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OracleUsuarioDao implements UsuarioDao {
     private Connection conexao;
@@ -44,5 +47,192 @@ public class OracleUsuarioDao implements UsuarioDao {
             }
         }
         return resultado;
+    }
+
+    @Override
+    public void cadastrar(Usuario usuario) throws DBException {
+        PreparedStatement stmt = null;
+        
+        try {
+            conexao = ConnectionManager.getInstance().getConnection();
+            String sql = "INSERT INTO FINTECH_USUARIOS (EMAIL, SENHA, TIPO_USUARIO) VALUES (?, ?, ?)";
+            stmt = conexao.prepareStatement(sql);
+            stmt.setString(1, usuario.getEmail());
+            stmt.setString(2, usuario.getSenha());
+            stmt.setString(3, usuario.getTipoUsuario());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DBException("Erro ao cadastrar usuário", e);
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conexao != null) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void atualizar(Usuario usuario) throws DBException {
+        PreparedStatement stmt = null;
+        
+        try {
+            conexao = ConnectionManager.getInstance().getConnection();
+            String sql = "UPDATE FINTECH_USUARIOS SET EMAIL = ?, TIPO_USUARIO = ?";
+            
+            // Se uma nova senha foi fornecida, inclui ela na atualização
+            if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
+                sql += ", SENHA = ?";
+            }
+            
+            sql += " WHERE ID = ?";
+            
+            stmt = conexao.prepareStatement(sql);
+            stmt.setString(1, usuario.getEmail());
+            stmt.setString(2, usuario.getTipoUsuario());
+            
+            if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
+                stmt.setString(3, usuario.getSenha());
+                stmt.setLong(4, usuario.getId());
+            } else {
+                stmt.setLong(3, usuario.getId());
+            }
+            
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DBException("Erro ao atualizar usuário", e);
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conexao != null) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void remover(Long id) throws DBException {
+        PreparedStatement stmt = null;
+        
+        try {
+            conexao = ConnectionManager.getInstance().getConnection();
+            String sql = "DELETE FROM FINTECH_USUARIOS WHERE ID = ?";
+            stmt = conexao.prepareStatement(sql);
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DBException("Erro ao remover usuário", e);
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conexao != null) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public Usuario buscar(Long id) throws DBException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Usuario usuario = null;
+        
+        try {
+            conexao = ConnectionManager.getInstance().getConnection();
+            String sql = "SELECT * FROM FINTECH_USUARIOS WHERE ID = ?";
+            stmt = conexao.prepareStatement(sql);
+            stmt.setLong(1, id);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                usuario = new Usuario();
+                usuario.setId(rs.getLong("ID"));
+                usuario.setEmail(rs.getString("EMAIL"));
+                usuario.setSenha(rs.getString("SENHA"));
+                usuario.setTipoUsuario(rs.getString("TIPO_USUARIO"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DBException("Erro ao buscar usuário", e);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conexao != null) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return usuario;
+    }
+
+    @Override
+    public List<Usuario> listar() throws DBException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<Usuario> lista = new ArrayList<>();
+        
+        try {
+            conexao = ConnectionManager.getInstance().getConnection();
+            String sql = "SELECT * FROM FINTECH_USUARIOS ORDER BY ID";
+            stmt = conexao.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Usuario usuario = new Usuario();
+                usuario.setId(rs.getLong("ID"));
+                usuario.setEmail(rs.getString("EMAIL"));
+                usuario.setSenha(rs.getString("SENHA"));
+                usuario.setTipoUsuario(rs.getString("TIPO_USUARIO"));
+                lista.add(usuario);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DBException("Erro ao listar usuários", e);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conexao != null) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
     }
 }
