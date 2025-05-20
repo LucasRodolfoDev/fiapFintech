@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <nav class="navbar navbar-dark navbar-expand-lg bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="index.jsp">FINTECH - HOME</a>
@@ -19,11 +20,25 @@
                     <a class="nav-link" href="clientes?acao=listar">Listar Clientes</a>
                 </li>
             </ul>
-            <form action="login" method="post" class="d-flex ms-auto">
-                <input type="email" name="email" placeholder="Email" class="form-control me-2">
-                <input type="password" name="senha" placeholder="Senha" class="form-control me-2">
-                <button type="submit" class="btn btn-primary">Entrar</button>
-            </form>
+            <div class="ms-auto">
+                <c:if test="${empty sessionScope.usuario}">
+                    <span class="navbar-text text-danger" style="margin-right: 10px;">
+                        ${erro}
+                    </span>
+
+                    <form action="login" method="post" class="d-flex">
+                        <input type="email" name="email" placeholder="Email" class="form-control me-2">
+                        <input type="password" name="senha" placeholder="Senha" class="form-control me-2">
+                        <button type="submit" class="btn btn-primary">Entrar</button>
+                    </form>
+                </c:if>
+                <c:if test="${not empty sessionScope.usuario}">
+                    <span class="navbar-text text-success" style="margin-right: 10px;">
+                        ${sessionScope.usuario.email}
+                        <a href="login" class="btn btn-danger">Sair</a>
+                    </span>
+                </c:if>
+            </div>
         </div>
     </div>
 </nav>

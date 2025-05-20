@@ -2,8 +2,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="br.com.matheuscarino.fiapfintech.model.Conta" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
 <!DOCTYPE html>
 <html>

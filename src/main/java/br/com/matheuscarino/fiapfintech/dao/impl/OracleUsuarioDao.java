@@ -14,9 +14,10 @@ public class OracleUsuarioDao implements UsuarioDao {
     
     @Override
     public boolean validarUsuario(Usuario usuario) {
-
         PreparedStatement stmt = null;
         ResultSet rs = null;
+        boolean resultado = false;
+        
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "SELECT * FROM FINTECH_USUARIOS WHERE EMAIL = ? AND SENHA = ?";
@@ -26,9 +27,8 @@ public class OracleUsuarioDao implements UsuarioDao {
             stmt.setString(2, usuario.getSenha());
             rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                return true;
-            }
+            resultado = rs.next();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -39,13 +39,10 @@ public class OracleUsuarioDao implements UsuarioDao {
                 if (stmt != null) {
                     stmt.close();
                 }
-                if (conexao != null) {
-                    conexao.close();
-                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return resultado;
     }
 }
