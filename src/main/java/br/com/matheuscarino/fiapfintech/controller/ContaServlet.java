@@ -15,6 +15,9 @@ import br.com.matheuscarino.fiapfintech.exception.DBException;
 import br.com.matheuscarino.fiapfintech.factory.DaoFactory;
 import java.util.List;
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
+import br.com.matheuscarino.fiapfintech.model.Cliente;
 
 @WebServlet("/contas")
 public class ContaServlet extends HttpServlet {
@@ -218,8 +221,18 @@ public class ContaServlet extends HttpServlet {
                 contas = dao.listar();
             }
 
+            // Buscar os dados dos clientes para todas as contas
+            Map<Long, Cliente> clientesMap = new HashMap<>();
+            for (Conta conta : contas) {
+                if (!clientesMap.containsKey(conta.getClienteId())) {
+                    Cliente cliente = clienteDao.buscar(conta.getClienteId().intValue());
+                    clientesMap.put(conta.getClienteId(), cliente);
+                }
+            }
+
             System.out.println("Total de contas encontradas: " + (contas != null ? contas.size() : 0));
             req.setAttribute("contas", contas);
+            req.setAttribute("clientesMap", clientesMap);
             System.out.println("Redirecionando para listar-contas.jsp");
             req.getRequestDispatcher("listar-contas.jsp").forward(req, resp);
         } catch (DBException e) {
