@@ -1,0 +1,16 @@
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    padding-bottom: 60px; /* Altura do footer */
+}
+
+.footer {
+    background-color: #f8f9fa;
+    padding: 1rem 0;
+    text-align: center;
+} 
