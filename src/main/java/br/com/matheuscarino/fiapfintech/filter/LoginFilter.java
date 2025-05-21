@@ -17,7 +17,7 @@ public class LoginFilter implements Filter {
         String url = httpRequest.getRequestURL().toString();
 
         if (session.getAttribute("usuario") == null && !url.endsWith("login") && 
-            !url.contains("resources") && !url.contains("home.jsp")) {
+            !url.contains("resources") && !url.contains("home.jsp") && !url.endsWith("cadastro") && !url.endsWith("cadastro.jsp")) {
             request.setAttribute("erro", "Entre com o usuário e senha!");
             request.getRequestDispatcher("home.jsp").forward(request, response);
         } else {
@@ -25,5 +25,3 @@ public class LoginFilter implements Filter {
         }
     }
 }
-
-

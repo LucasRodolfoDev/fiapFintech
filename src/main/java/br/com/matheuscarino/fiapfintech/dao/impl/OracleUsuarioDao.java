@@ -15,13 +15,13 @@ import java.util.List;
 
 public class OracleUsuarioDao implements UsuarioDao {
     private Connection conexao;
-    
+
     @Override
     public boolean validarUsuario(Usuario usuario) {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         boolean resultado = false;
-        
+
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "SELECT * FROM FINTECH_USUARIOS WHERE EMAIL = ? AND SENHA = ?";
@@ -32,7 +32,7 @@ public class OracleUsuarioDao implements UsuarioDao {
             rs = stmt.executeQuery();
 
             resultado = rs.next();
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -44,7 +44,7 @@ public class OracleUsuarioDao implements UsuarioDao {
                     stmt.close();
                 }
                 if (conexao != null) {
-                    conexao.close();
+                    ConnectionManager.closeConnection(conexao);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -56,7 +56,7 @@ public class OracleUsuarioDao implements UsuarioDao {
     @Override
     public void cadastrar(Usuario usuario) throws DBException {
         PreparedStatement stmt = null;
-        
+
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "INSERT INTO FINTECH_USUARIOS (EMAIL, SENHA, TIPO_USUARIO) VALUES (?, ?, ?)";
@@ -72,7 +72,7 @@ public class OracleUsuarioDao implements UsuarioDao {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -82,7 +82,7 @@ public class OracleUsuarioDao implements UsuarioDao {
     @Override
     public void atualizar(Usuario usuario) throws DBException {
         PreparedStatement stmt = null;
-        
+
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "UPDATE FINTECH_USUARIOS SET EMAIL = ?, SENHA = ?, TIPO_USUARIO = ? WHERE ID = ?";
@@ -99,7 +99,7 @@ public class OracleUsuarioDao implements UsuarioDao {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -109,7 +109,7 @@ public class OracleUsuarioDao implements UsuarioDao {
     @Override
     public void remover(Long id) throws DBException {
         PreparedStatement stmt = null;
-        
+
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "DELETE FROM FINTECH_USUARIOS WHERE ID = ?";
@@ -126,7 +126,7 @@ public class OracleUsuarioDao implements UsuarioDao {
                     stmt.close();
                 }
                 if (conexao != null) {
-                    conexao.close();
+                    ConnectionManager.closeConnection(conexao);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -139,7 +139,7 @@ public class OracleUsuarioDao implements UsuarioDao {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         Usuario usuario = null;
-        
+
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "SELECT * FROM FINTECH_USUARIOS WHERE ID = ?";
@@ -167,7 +167,7 @@ public class OracleUsuarioDao implements UsuarioDao {
                     stmt.close();
                 }
                 if (conexao != null) {
-                    conexao.close();
+                    ConnectionManager.closeConnection(conexao);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -181,7 +181,7 @@ public class OracleUsuarioDao implements UsuarioDao {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         List<Usuario> lista = new ArrayList<>();
-        
+
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "SELECT * FROM FINTECH_USUARIOS ORDER BY ID";
@@ -209,7 +209,7 @@ public class OracleUsuarioDao implements UsuarioDao {
                     stmt.close();
                 }
                 if (conexao != null) {
-                    conexao.close();
+                    ConnectionManager.closeConnection(conexao);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -246,7 +246,7 @@ public class OracleUsuarioDao implements UsuarioDao {
             try {
                 if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

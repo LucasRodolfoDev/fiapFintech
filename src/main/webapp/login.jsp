@@ -34,7 +34,7 @@
         <div class="container">
             <div class="login-container">
                 <h2 class="text-center mb-4">Login FINTECH</h2>
-                
+
                 <c:if test="${not empty erro}">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         ${erro}
@@ -42,7 +42,7 @@
                     </div>
                 </c:if>
 
-                <form action="login" method="post">
+                <form action="${pageContext.request.contextPath}/login" method="post">
                     <div class="mb-3">
                         <label for="email" class="form-label">E-mail</label>
                         <input type="email" class="form-control" id="email" name="email" required>
@@ -51,8 +51,9 @@
                         <label for="senha" class="form-label">Senha</label>
                         <input type="password" class="form-control" id="senha" name="senha" required>
                     </div>
-                    <div class="d-grid">
+                    <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Entrar</button>
+                        <a href="${pageContext.request.contextPath}/cadastro" class="btn btn-outline-secondary">Criar uma nova conta</a>
                     </div>
                 </form>
             </div>

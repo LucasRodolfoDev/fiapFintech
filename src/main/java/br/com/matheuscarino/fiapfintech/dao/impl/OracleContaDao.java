@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OracleContaDao implements ContaDao {
-    
+
     private Connection conexao;
-    
+
     @Override
     public void cadastrar(Conta conta) throws DBException {
         PreparedStatement stmt = null;
-        
+
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "INSERT INTO FINTECH_CONTAS (CLIENTE_ID, TIPO_CONTA, SALDO, STATUS, DATA_CRIACAO) VALUES (?, ?, ?, ?, ?)";
@@ -39,7 +39,7 @@ public class OracleContaDao implements ContaDao {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -49,7 +49,7 @@ public class OracleContaDao implements ContaDao {
     @Override
     public void atualizar(Conta conta) throws DBException {
         PreparedStatement stmt = null;
-        
+
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "UPDATE FINTECH_CONTAS SET CLIENTE_ID = ?, TIPO_CONTA = ?, SALDO = ?, STATUS = ?, DATA_CRIACAO = ? WHERE ID = ?";
@@ -68,7 +68,7 @@ public class OracleContaDao implements ContaDao {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -78,7 +78,7 @@ public class OracleContaDao implements ContaDao {
     @Override
     public void remover(int id) throws DBException {
         PreparedStatement stmt = null;
-        
+
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "DELETE FROM FINTECH_CONTAS WHERE ID = ?";
@@ -92,7 +92,7 @@ public class OracleContaDao implements ContaDao {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -129,7 +129,7 @@ public class OracleContaDao implements ContaDao {
             try {
                 if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -167,7 +167,7 @@ public class OracleContaDao implements ContaDao {
             try {
                 if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -206,7 +206,7 @@ public class OracleContaDao implements ContaDao {
             try {
                 if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

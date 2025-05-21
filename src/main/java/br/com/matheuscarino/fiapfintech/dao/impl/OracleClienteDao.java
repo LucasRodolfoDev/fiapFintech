@@ -17,12 +17,12 @@ import java.util.ArrayList;
 
 
 public class OracleClienteDao implements ClienteDao {
-    
+
     private Connection conexao;
     @Override
     public void cadastrar(Cliente cliente) throws DBException {
         PreparedStatement stmt = null;
-        
+
         try {
             conexao = ConnectionManager.getInstance().getConnection();
             String sql = "INSERT INTO FINTECH_CLIENTES (NOME, CPF, EMAIL, TELEFONE, ENDERECO, DATA_NASCIMENTO, STATUS) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -41,9 +41,9 @@ public class OracleClienteDao implements ClienteDao {
             throw new DBException("Erro ao criar cliente", e);
         } finally {
             try {
-                stmt.close();
+                if (stmt != null) stmt.close();
                 System.out.println("Statement fechado");
-                conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
                 System.out.println("Conexão fechada");
                 System.out.println("Cliente cadastrado com sucesso");
             } catch (SQLException e) {
@@ -75,9 +75,9 @@ public class OracleClienteDao implements ClienteDao {
             throw new DBException("Erro ao atualizar cliente", e);
         } finally {
             try {
-                stmt.close();
+                if (stmt != null) stmt.close();
                 System.out.println("Statement fechado");
-                conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
                 System.out.println("Conexão fechada");
                 System.out.println("Cliente atualizado com sucesso");
             } catch (SQLException e) {
@@ -103,9 +103,9 @@ public class OracleClienteDao implements ClienteDao {
             throw new DBException("Erro ao remover cliente", e);
         } finally {
             try {
-                stmt.close();
+                if (stmt != null) stmt.close();
                 System.out.println("Statement fechado");
-                conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
                 System.out.println("Conexão fechada");
                 System.out.println("Cliente removido com sucesso");
             } catch (SQLException e) {
@@ -147,7 +147,7 @@ public class OracleClienteDao implements ClienteDao {
             try {
                 if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
                 System.out.println("Conexão e recursos fechados");
                 System.out.println("Cliente encontrado com sucesso");
             } catch (SQLException e) {
@@ -167,7 +167,7 @@ public class OracleClienteDao implements ClienteDao {
             System.out.println("Obtendo conexão com o banco de dados...");
             conexao = ConnectionManager.getInstance().getConnection();
             System.out.println("Conexão obtida com sucesso");
-            
+
             String sql = "SELECT * FROM FINTECH_CLIENTES ORDER BY ID";
             System.out.println("Executando query: " + sql);
             stmt = conexao.prepareStatement(sql);
@@ -196,7 +196,7 @@ public class OracleClienteDao implements ClienteDao {
             try {
                 if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
-                if (conexao != null) conexao.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
                 System.out.println("Conexão e recursos fechados");
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -204,5 +204,45 @@ public class OracleClienteDao implements ClienteDao {
         }
 
         return lista;
+    }
+
+    @Override
+    public Cliente buscarPorEmail(String email) throws DBException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Cliente cliente = null;
+
+        try {
+            conexao = ConnectionManager.getInstance().getConnection();
+            String sql = "SELECT * FROM FINTECH_CLIENTES WHERE EMAIL = ?";
+            stmt = conexao.prepareStatement(sql);
+            stmt.setString(1, email);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                cliente = new Cliente();
+                cliente.setId(rs.getLong("ID"));
+                cliente.setNome(rs.getString("NOME"));
+                cliente.setCpf(rs.getString("CPF"));
+                cliente.setEmail(rs.getString("EMAIL"));
+                cliente.setTelefone(rs.getString("TELEFONE"));
+                cliente.setEndereco(rs.getString("ENDERECO"));
+                cliente.setDataNascimento(rs.getDate("DATA_NASCIMENTO").toLocalDate());
+                cliente.setStatus(rs.getBoolean("STATUS"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DBException("Erro ao buscar cliente por email", e);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conexao != null) ConnectionManager.closeConnection(conexao);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return cliente;
     }
 }

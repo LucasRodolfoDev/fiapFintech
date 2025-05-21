@@ -29,6 +29,8 @@ public class AuthFilter implements Filter {
         if (path.equals("/") || 
             path.equals("/login.jsp") || 
             path.equals("/login") || 
+            path.equals("/cadastro") ||
+            path.equals("/cadastro.jsp") ||
             path.contains("/resources/") ||
             path.contains(".css") ||
             path.contains(".js") ||
