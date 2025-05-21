@@ -2,10 +2,12 @@ package br.com.matheuscarino.fiapfintech.controller;
 
 import br.com.matheuscarino.fiapfintech.dao.ContaDao;
 import br.com.matheuscarino.fiapfintech.dao.UsuarioDao;
+import br.com.matheuscarino.fiapfintech.dao.ClienteDao;
 import br.com.matheuscarino.fiapfintech.exception.DBException;
 import br.com.matheuscarino.fiapfintech.factory.DaoFactory;
 import br.com.matheuscarino.fiapfintech.model.Conta;
 import br.com.matheuscarino.fiapfintech.model.Usuario;
+import br.com.matheuscarino.fiapfintech.model.Cliente;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,17 +17,21 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @WebServlet("/transferencia")
 public class TransferenciaServlet extends HttpServlet {
     
     private ContaDao contaDao;
     private UsuarioDao usuarioDao;
+    private ClienteDao clienteDao;
     
     @Override
     public void init() throws ServletException {
         contaDao = DaoFactory.getContaDao();
         usuarioDao = DaoFactory.getUsuarioDao();
+        clienteDao = DaoFactory.getClienteDao();
     }
     
     @Override
@@ -85,8 +91,24 @@ public class TransferenciaServlet extends HttpServlet {
         
         List<Conta> contasDestino = contaDao.listar();
         
+        // Buscar os dados dos clientes para todas as contas
+        Map<Long, Cliente> clientesMap = new HashMap<>();
+        for (Conta conta : contasOrigem) {
+            if (!clientesMap.containsKey(conta.getClienteId())) {
+                Cliente cliente = clienteDao.buscar(conta.getClienteId().intValue());
+                clientesMap.put(conta.getClienteId(), cliente);
+            }
+        }
+        for (Conta conta : contasDestino) {
+            if (!clientesMap.containsKey(conta.getClienteId())) {
+                Cliente cliente = clienteDao.buscar(conta.getClienteId().intValue());
+                clientesMap.put(conta.getClienteId(), cliente);
+            }
+        }
+        
         request.setAttribute("contasOrigem", contasOrigem);
         request.setAttribute("contasDestino", contasDestino);
+        request.setAttribute("clientesMap", clientesMap);
         request.getRequestDispatcher("transferencia.jsp").forward(request, response);
     }
     

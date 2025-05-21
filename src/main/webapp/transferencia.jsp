@@ -38,7 +38,9 @@
                 <select class="form-select" id="contaOrigem" name="contaOrigem" required>
                     <option value="">Selecione a conta de origem</option>
                     <c:forEach var="conta" items="${contasOrigem}">
+                        <c:set var="cliente" value="${clientesMap[conta.clienteId]}" />
                         <option value="${conta.id}">
+                            ${cliente.nome} - 
                             Conta ${conta.id} - 
                             ${conta.tipoConta == 1 ? 'Corrente' : 'Poupança'} - 
                             Saldo: R$ ${conta.saldo}
@@ -52,7 +54,9 @@
                 <select class="form-select" id="contaDestino" name="contaDestino" required>
                     <option value="">Selecione a conta de destino</option>
                     <c:forEach var="conta" items="${contasDestino}">
+                        <c:set var="cliente" value="${clientesMap[conta.clienteId]}" />
                         <option value="${conta.id}">
+                            ${cliente.nome} - 
                             Conta ${conta.id} - 
                             ${conta.tipoConta == 1 ? 'Corrente' : 'Poupança'} - 
                             Saldo: R$ ${conta.saldo}
