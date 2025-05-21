@@ -15,7 +15,7 @@
 
 <div class="container mt-4">
     <h2>Lista de Usuários</h2>
-    
+
     <c:if test="${not empty mensagem}">
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             ${mensagem}
@@ -30,7 +30,7 @@
     </c:if>
 
     <div class="mb-3">
-        <a href="cadastrar-usuario.jsp" class="btn btn-primary">
+        <a href="${pageContext.request.contextPath}/cadastro" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Novo Usuário
         </a>
     </div>
