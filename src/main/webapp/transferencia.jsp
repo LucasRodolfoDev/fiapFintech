@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -15,14 +16,14 @@
 
     <div class="container mt-4">
         <h2>Transferência entre Contas</h2>
-        
+
         <c:if test="${not empty mensagem}">
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 ${mensagem}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </c:if>
-        
+
         <c:if test="${not empty erro}">
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 ${erro}
@@ -32,7 +33,7 @@
 
         <form action="transferencia" method="post" class="mt-4">
             <input type="hidden" name="acao" value="transferir">
-            
+
             <div class="mb-3">
                 <label for="contaOrigem" class="form-label">Conta de Origem</label>
                 <select class="form-select" id="contaOrigem" name="contaOrigem" required>
@@ -43,12 +44,12 @@
                             ${cliente.nome} - 
                             Conta ${conta.id} - 
                             ${conta.tipoConta == 1 ? 'Corrente' : 'Poupança'} - 
-                            Saldo: R$ ${conta.saldo}
+                            Saldo: R$ <fmt:formatNumber value="${conta.saldo}" minFractionDigits="2" maxFractionDigits="2" />
                         </option>
                     </c:forEach>
                 </select>
             </div>
-            
+
             <div class="mb-3">
                 <label for="contaDestino" class="form-label">Conta de Destino</label>
                 <select class="form-select" id="contaDestino" name="contaDestino" required>
@@ -63,7 +64,7 @@
                     </c:forEach>
                 </select>
             </div>
-            
+
             <div class="mb-3">
                 <label for="valor" class="form-label">Valor da Transferência</label>
                 <div class="input-group">
@@ -71,7 +72,7 @@
                     <input type="number" step="0.01" min="0.01" class="form-control" id="valor" name="valor" required>
                 </div>
             </div>
-            
+
             <button type="submit" class="btn btn-primary">Realizar Transferência</button>
             <a href="contas?acao=listar" class="btn btn-secondary">Cancelar</a>
         </form>
@@ -84,7 +85,7 @@
         document.getElementById('contaOrigem').addEventListener('change', function() {
             var contaDestino = document.getElementById('contaDestino');
             var contaOrigem = this.value;
-            
+
             for (var i = 0; i < contaDestino.options.length; i++) {
                 if (contaDestino.options[i].value === contaOrigem) {
                     contaDestino.options[i].disabled = true;

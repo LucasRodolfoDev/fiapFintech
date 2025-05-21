@@ -16,7 +16,7 @@
 
 <div class="container mt-4">
     <h2>Extrato de Transferências</h2>
-    
+
     <c:if test="${not empty mensagem}">
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             ${mensagem}
@@ -38,7 +38,7 @@
         <div class="card-body">
             <form action="extrato" method="get" class="row g-3">
                 <input type="hidden" name="acao" value="listar">
-                
+
                 <c:if test="${sessionScope.tipoUsuario == 'gerente'}">
                     <div class="col-md-4">
                         <label for="clienteId" class="form-label">Cliente</label>
@@ -52,19 +52,19 @@
                         </select>
                     </div>
                 </c:if>
-                
+
                 <div class="col-md-4">
                     <label for="contaId" class="form-label">Conta</label>
                     <select name="contaId" id="contaId" class="form-select" onchange="this.form.submit()">
                         <option value="">Todas as contas</option>
                         <c:forEach items="${contasUsuario}" var="conta">
                             <option value="${conta.id}" ${contaIdSelecionada == conta.id ? 'selected' : ''}>
-                                Conta ${conta.id} - Tipo: ${conta.tipoConta == 1 ? 'Corrente' : 'Poupança'} - Saldo: R$ ${conta.saldo}
+                                Conta ${conta.id} - Tipo: ${conta.tipoConta == 1 ? 'Corrente' : 'Poupança'} - Saldo: R$ <fmt:formatNumber value="${conta.saldo}" minFractionDigits="2" maxFractionDigits="2" />
                             </option>
                         </c:forEach>
                     </select>
                 </div>
-                
+
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-filter"></i> Filtrar
@@ -98,10 +98,10 @@
                     <c:set var="contaDestino" value="${contasMap[transferencia.contaDestinoId]}" />
                     <c:set var="clienteOrigem" value="${clientesMap[contaOrigem.clienteId]}" />
                     <c:set var="clienteDestino" value="${clientesMap[contaDestino.clienteId]}" />
-                    
+
                     <c:set var="isEntrada" value="${contaDestino.clienteId == sessionScope.usuarioId}" />
                     <c:set var="isSaida" value="${contaOrigem.clienteId == sessionScope.usuarioId}" />
-                    
+
                     <tr class="${isEntrada ? 'table-success' : (isSaida ? 'table-danger' : '')}">
                         <td>${transferencia.id}</td>
                         <td>
@@ -114,7 +114,7 @@
                         <td>
                             Conta ${contaDestino.id} (${clienteDestino.nome})
                         </td>
-                        <td>R$ ${transferencia.valor}</td>
+                        <td>R$ <fmt:formatNumber value="${transferencia.valor}" minFractionDigits="2" maxFractionDigits="2" /></td>
                         <td>
                             <c:choose>
                                 <c:when test="${contaOrigem.clienteId == contaDestino.clienteId}">

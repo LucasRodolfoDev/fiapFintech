@@ -52,11 +52,11 @@
     <%@ include file="header.jsp" %>
     <div class="container">
         <h1>Lista de Contas</h1>
-        
+
         <%
             List<Conta> contas = (List<Conta>) request.getAttribute("contas");
             String erro = (String) request.getAttribute("erro");
-            
+
             if (erro != null) {
         %>
                 <div class="error-message">
@@ -91,7 +91,7 @@
                                 <td>${conta.id}</td>
                                 <td>${clientesMap[conta.clienteId].nome}</td>
                                 <td>${conta.tipoConta == 1 ? 'Corrente' : 'Poupança'}</td>
-                                <td>R$ ${conta.saldo}</td>
+                                <td>R$ <fmt:formatNumber value="${conta.saldo}" minFractionDigits="2" maxFractionDigits="2" /></td>
                                 <td>${conta.status ? 'Ativa' : 'Inativa'}</td>
                                 <td>${conta.dataCriacao.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}</td>
                                 <td class="text-center">
@@ -141,7 +141,7 @@
     </div>
 
     <%@ include file="footer.jsp" %>
-    
+
     <script src="${pageContext.request.contextPath}/resources/js/bootstrap.bundle.min.js"></script>
     <script>
         function setIdExcluir(id) {
