@@ -1,6 +1,6 @@
 package br.com.matheuscarino.fiapfintech.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Conta {
 
@@ -9,13 +9,13 @@ public class Conta {
     private int tipoConta;
     private double saldo;
     private boolean status;
-    private LocalDate dataCriacao;
+    private LocalDateTime dataCriacao;
 
     public Conta() {
         super();
     }
 
-    public Conta(Long clienteId, int tipoConta, double saldo, boolean status, LocalDate dataCriacao) {
+    public Conta(Long clienteId, int tipoConta, double saldo, boolean status, LocalDateTime dataCriacao) {
         super();
         this.clienteId = clienteId;
         this.tipoConta = tipoConta;
@@ -64,11 +64,11 @@ public class Conta {
         this.status = status;
     }
 
-    public LocalDate getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(LocalDate dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 }

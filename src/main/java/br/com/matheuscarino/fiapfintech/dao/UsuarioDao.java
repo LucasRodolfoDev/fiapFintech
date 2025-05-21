@@ -12,5 +12,6 @@ public interface UsuarioDao {
     void remover(Long id) throws DBException;
     Usuario buscar(Long id) throws DBException;
     List<Usuario> listar() throws DBException;
+    Usuario buscarPorEmail(String email) throws DBException;
 
 }

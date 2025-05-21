@@ -1,6 +1,7 @@
 package br.com.matheuscarino.fiapfintech.controller;
 
 import br.com.matheuscarino.fiapfintech.dao.ContaDao;
+import br.com.matheuscarino.fiapfintech.dao.ClienteDao;
 import br.com.matheuscarino.fiapfintech.model.Conta;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -8,23 +9,24 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
+import jakarta.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import br.com.matheuscarino.fiapfintech.exception.DBException;
 import br.com.matheuscarino.fiapfintech.factory.DaoFactory;
 import java.util.List;
-
 import java.io.IOException;
-import br.com.matheuscarino.fiapfintech.dao.ClienteDao;
 
 @WebServlet("/contas")
 public class ContaServlet extends HttpServlet {
 
     private ContaDao dao;
+    private ClienteDao clienteDao;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         System.out.println("Inicializando ContaServlet...");
         dao = DaoFactory.getContaDao();
+        clienteDao = DaoFactory.getClienteDao();
         System.out.println("ContaServlet inicializado com sucesso");
     }
 
@@ -36,6 +38,11 @@ public class ContaServlet extends HttpServlet {
             acao = "cadastrar";
         }
         System.out.println("Ação POST: " + acao);
+
+        // Verifica permissões
+        if (!verificarPermissao(req, resp, acao)) {
+            return;
+        }
 
         switch (acao) {
             case "cadastrar":
@@ -50,13 +57,53 @@ public class ContaServlet extends HttpServlet {
         }
     }
 
+    private boolean verificarPermissao(HttpServletRequest req, HttpServletResponse resp, String acao) throws ServletException, IOException {
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("usuario") == null) {
+            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+            return false;
+        }
+
+        String tipoUsuario = (String) session.getAttribute("tipoUsuario");
+        Long usuarioId = (Long) session.getAttribute("usuarioId");
+
+        // Gerentes têm acesso total
+        if (tipoUsuario.equals("gerente")) {
+            return true;
+        }
+
+        // Clientes só podem ver e editar suas próprias contas
+        if (tipoUsuario.equals("cliente")) {
+            if (acao.equals("editar") || acao.equals("remover")) {
+                String idParam = req.getParameter("id");
+                if (idParam != null) {
+                    try {
+                        Long id = Long.parseLong(idParam);
+                        Conta conta = dao.buscar(id.intValue());
+                        if (conta == null || !conta.getClienteId().equals(usuarioId)) {
+                            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Acesso negado");
+                            return false;
+                        }
+                    } catch (DBException e) {
+                        resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Acesso negado");
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Acesso negado");
+        return false;
+    }
+
     private void cadastrar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("Iniciando cadastro de conta...");
         Long clienteId = Long.parseLong(req.getParameter("clienteId"));
         int tipoConta = Integer.parseInt(req.getParameter("tipo"));
         double saldo = Double.parseDouble(req.getParameter("saldo"));
         boolean status = "1".equals(req.getParameter("status"));
-        LocalDate dataCriacao = LocalDate.now();
+        LocalDateTime dataCriacao = LocalDateTime.now();
 
         Conta conta = new Conta(clienteId, tipoConta, saldo, status, dataCriacao);
         try {
@@ -79,7 +126,7 @@ public class ContaServlet extends HttpServlet {
         int tipoConta = Integer.parseInt(req.getParameter("tipo"));
         double saldo = Double.parseDouble(req.getParameter("saldo"));
         boolean status = "1".equals(req.getParameter("status"));
-        LocalDate dataCriacao = LocalDate.parse(req.getParameter("dataCriacao"));
+        LocalDateTime dataCriacao = LocalDateTime.parse(req.getParameter("dataCriacao"));
 
         Conta conta = new Conta(clienteId, tipoConta, saldo, status, dataCriacao);
         conta.setId(id);
@@ -119,6 +166,11 @@ public class ContaServlet extends HttpServlet {
         }
         System.out.println("Ação GET: " + acao);
 
+        // Verifica permissões
+        if (!verificarPermissao(req, resp, acao)) {
+            return;
+        }
+
         switch (acao) {
             case "listar":
                 listar(req, resp);
@@ -137,7 +189,6 @@ public class ContaServlet extends HttpServlet {
             req.setAttribute("conta", conta);
             
             // Carregar lista de clientes
-            ClienteDao clienteDao = DaoFactory.getClienteDao();
             req.setAttribute("clientes", clienteDao.listar());
             
             System.out.println("Conta encontrada para edição: " + conta.getId());
@@ -154,7 +205,19 @@ public class ContaServlet extends HttpServlet {
     private void listar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("Iniciando listagem de contas...");
         try {
-            List<Conta> contas = dao.listar();
+            HttpSession session = req.getSession(false);
+            String tipoUsuario = (String) session.getAttribute("tipoUsuario");
+            Long usuarioId = (Long) session.getAttribute("usuarioId");
+
+            List<Conta> contas;
+            if (tipoUsuario.equals("cliente")) {
+                // Cliente só vê suas próprias contas
+                contas = dao.listarPorCliente(usuarioId.intValue());
+            } else {
+                // Gerente vê todas as contas
+                contas = dao.listar();
+            }
+
             System.out.println("Total de contas encontradas: " + (contas != null ? contas.size() : 0));
             req.setAttribute("contas", contas);
             System.out.println("Redirecionando para listar-contas.jsp");

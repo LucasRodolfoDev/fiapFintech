@@ -8,24 +8,36 @@
 <%--        </button>--%>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="cadastrar-conta">Cadastro de Conta</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="contas?acao=listar">Listar Contas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="cadastrar-cliente.jsp">Cadastro de Cliente</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="clientes?acao=listar">Listar Clientes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="cadastrar-usuario.jsp">Cadastro de Usuário</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="usuarios?acao=listar">Listar Usuários</a>
-                </li>
+                <c:choose>
+                    <c:when test="${sessionScope.tipoUsuario == 'gerente'}">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="cadastrar-conta">Cadastro de Conta</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contas?acao=listar">Listar Contas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="cadastrar-cliente.jsp">Cadastro de Cliente</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="clientes?acao=listar">Listar Clientes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="cadastrar-usuario.jsp">Cadastro de Usuário</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="usuarios?acao=listar">Listar Usuários</a>
+                        </li>
+                    </c:when>
+                    <c:when test="${sessionScope.tipoUsuario == 'cliente'}">
+                        <li class="nav-item">
+                            <a class="nav-link" href="contas?acao=listar">Minhas Contas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="clientes?acao=abrir-form-edicao&id=${sessionScope.usuarioId}">Meu Cadastro</a>
+                        </li>
+                    </c:when>
+                </c:choose>
             </ul>
             <div class="ms-auto">
                 <c:if test="${empty sessionScope.usuario}">
@@ -40,10 +52,12 @@
                     </form>
                 </c:if>
                 <c:if test="${not empty sessionScope.usuario}">
-                    <span class="navbar-text text-success" style="margin-right: 10px;">
-                        ${sessionScope.usuario.email}
-                        <a href="login" class="btn btn-danger">Sair</a>
-                    </span>
+                    <div class="d-flex">
+                        <span class="navbar-text me-3">
+                            Olá, ${sessionScope.usuario}
+                        </span>
+                        <a href="logout" class="btn btn-outline-light btn-sm">Sair</a>
+                    </div>
                 </c:if>
             </div>
         </div>

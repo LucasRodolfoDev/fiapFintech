@@ -11,4 +11,5 @@ public interface ContaDao {
     void remover(int id) throws DBException;
     Conta buscar(int id) throws DBException;
     List<Conta> listar() throws DBException;
+    List<Conta> listarPorCliente(int clienteId) throws DBException;
 }

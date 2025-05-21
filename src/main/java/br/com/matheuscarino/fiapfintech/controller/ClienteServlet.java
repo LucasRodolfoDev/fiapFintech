@@ -8,12 +8,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import br.com.matheuscarino.fiapfintech.exception.DBException;
 import br.com.matheuscarino.fiapfintech.factory.DaoFactory;
 import java.util.List;
-
-
 import java.io.IOException;
 
 @WebServlet("/clientes")
@@ -33,6 +32,11 @@ public class ClienteServlet extends HttpServlet {
             acao = "cadastrar";
         }
 
+        // Verifica permissões
+        if (!verificarPermissao(req, resp, acao)) {
+            return;
+        }
+
         switch (acao) {
             case "cadastrar":
                 cadastrar(req, resp);
@@ -44,6 +48,40 @@ public class ClienteServlet extends HttpServlet {
                 remover(req, resp);
                 break;
         }
+    }
+
+    private boolean verificarPermissao(HttpServletRequest req, HttpServletResponse resp, String acao) throws ServletException, IOException {
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("usuario") == null) {
+            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+            return false;
+        }
+
+        String tipoUsuario = (String) session.getAttribute("tipoUsuario");
+        Long usuarioId = (Long) session.getAttribute("usuarioId");
+
+        // Gerentes têm acesso total
+        if (tipoUsuario.equals("gerente")) {
+            return true;
+        }
+
+        // Clientes só podem editar seus próprios dados
+        if (tipoUsuario.equals("cliente")) {
+            if (acao.equals("editar") || acao.equals("remover")) {
+                String idParam = req.getParameter("id");
+                if (idParam != null) {
+                    Long id = Long.parseLong(idParam);
+                    if (!id.equals(usuarioId)) {
+                        resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Acesso negado");
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Acesso negado");
+        return false;
     }
 
     private void cadastrar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -108,6 +146,11 @@ public class ClienteServlet extends HttpServlet {
             acao = "listar";
         }
 
+        // Verifica permissões
+        if (!verificarPermissao(req, resp, acao)) {
+            return;
+        }
+
         switch (acao) {
             case "listar":
                 listar(req, resp);
@@ -118,33 +161,41 @@ public class ClienteServlet extends HttpServlet {
         }
     }
 
+    private void listar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            HttpSession session = req.getSession(false);
+            String tipoUsuario = (String) session.getAttribute("tipoUsuario");
+            Long usuarioId = (Long) session.getAttribute("usuarioId");
+
+            List<Cliente> clientes;
+            if (tipoUsuario.equals("cliente")) {
+                // Cliente só vê seus próprios dados
+                Cliente cliente = dao.buscar(usuarioId.intValue());
+                clientes = List.of(cliente);
+            } else {
+                // Gerente vê todos os clientes
+                clientes = dao.listar();
+            }
+
+            req.setAttribute("clientes", clientes);
+            req.getRequestDispatcher("listar-clientes.jsp").forward(req, resp);
+        } catch (DBException e) {
+            e.printStackTrace();
+            req.setAttribute("erro", "Erro ao listar clientes");
+            req.getRequestDispatcher("listar-clientes.jsp").forward(req, resp);
+        }
+    }
+
     private void abrirForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
         try {
             Cliente cliente = dao.buscar(id);
             req.setAttribute("cliente", cliente);
             req.getRequestDispatcher("editar-cliente.jsp").forward(req, resp);
-
         } catch (DBException e) {
             e.printStackTrace();
             System.out.println("Erro ao buscar cliente: " + e.getMessage());
             req.setAttribute("erro", "Erro ao buscar cliente: " + e.getMessage());
-            req.getRequestDispatcher("listar-clientes.jsp").forward(req, resp);
-
-        }
-    }
-
-    private void listar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            System.out.println("Iniciando listagem de clientes...");
-            List<Cliente> clientes = dao.listar();
-            System.out.println("Número de clientes encontrados: " + (clientes != null ? clientes.size() : 0));
-            req.setAttribute("clientes", clientes);
-            req.getRequestDispatcher("listar-clientes.jsp").forward(req, resp);
-        } catch (DBException e) {
-            e.printStackTrace();
-            System.out.println("Erro ao listar clientes: " + e.getMessage());
-            req.setAttribute("erro", "Erro ao listar clientes: " + e.getMessage());
             req.getRequestDispatcher("listar-clientes.jsp").forward(req, resp);
         }
     }

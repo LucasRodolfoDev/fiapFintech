@@ -1,65 +1,51 @@
 package br.com.matheuscarino.fiapfintech.controller;
 
 import br.com.matheuscarino.fiapfintech.dao.UsuarioDao;
-import br.com.matheuscarino.fiapfintech.exception.EmailException;
 import br.com.matheuscarino.fiapfintech.factory.DaoFactory;
-import jakarta.servlet.http.HttpSession;
+import br.com.matheuscarino.fiapfintech.model.Usuario;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import br.com.matheuscarino.fiapfintech.bo.EmailBo;
-import br.com.matheuscarino.fiapfintech.model.Usuario;
-import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-
-    private UsuarioDao dao;
-    private EmailBo bo;
-
-    public LoginServlet() {
-        dao = DaoFactory.getUsuarioDao();
-        bo = new EmailBo();
-    }
-
+    
+    private UsuarioDao usuarioDao;
+    
     @Override
-    protected void doPost(
-        HttpServletRequest request, 
-        HttpServletResponse response) throws ServletException, IOException {
-        
+    public void init() throws ServletException {
+        usuarioDao = DaoFactory.getUsuarioDao();
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
         String email = request.getParameter("email");
         String senha = request.getParameter("senha");
-
-        System.out.println("Tentativa de login - Email: " + email);
-
-        Usuario usuario = new Usuario(email, senha, "cliente");
-
-        if (dao.validarUsuario(usuario)) {
-            System.out.println("Login bem-sucedido para: " + email);
-            HttpSession session = request.getSession();
-            session.setAttribute("usuario", usuario);
-            request.setAttribute("usuario", usuario);
-            request.getRequestDispatcher("/home.jsp").forward(request, response);
-            try {
-                bo.enviarEmail(email, "Login realizado com sucesso", "Você realizou um login no sistema Fintech");
-            } catch (EmailException e) {
-                e.printStackTrace();
+        
+        try {
+            Usuario usuario = new Usuario(email, senha, null);
+            
+            if (usuarioDao.validarUsuario(usuario)) {
+                usuario = usuarioDao.buscarPorEmail(email);
+                HttpSession session = request.getSession();
+                session.setAttribute("usuario", usuario.getEmail());
+                session.setAttribute("tipoUsuario", usuario.getTipoUsuario());
+                session.setAttribute("usuarioId", usuario.getId());
+                
+                response.sendRedirect(request.getContextPath() + "/");
+                return;
             }
-        } else {
-            System.out.println("Falha no login para: " + email);
-            request.setAttribute("erro", "Email ou senha inválidos");
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
-        } 
-    }
-
-    protected void doGet(
-        HttpServletRequest request, 
-        HttpServletResponse response) throws ServletException, IOException {
-
-        HttpSession session = request.getSession();
-        session.invalidate();
-        response.sendRedirect(request.getContextPath() + "/home.jsp");
+            
+            request.setAttribute("erro", "E-mail ou senha inválidos");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        } catch (Exception e) {
+            request.setAttribute("erro", "Erro ao realizar login: " + e.getMessage());
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        }
     }
 }

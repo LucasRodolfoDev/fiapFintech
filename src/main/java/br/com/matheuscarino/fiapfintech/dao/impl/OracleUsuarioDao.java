@@ -4,6 +4,7 @@ import br.com.matheuscarino.fiapfintech.dao.ConnectionManager;
 import br.com.matheuscarino.fiapfintech.dao.UsuarioDao;
 import br.com.matheuscarino.fiapfintech.exception.DBException;
 import br.com.matheuscarino.fiapfintech.model.Usuario;
+import br.com.matheuscarino.fiapfintech.util.CriptografiaUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,6 +43,9 @@ public class OracleUsuarioDao implements UsuarioDao {
                 if (stmt != null) {
                     stmt.close();
                 }
+                if (conexao != null) {
+                    conexao.close();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -64,15 +68,11 @@ public class OracleUsuarioDao implements UsuarioDao {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new DBException("Erro ao cadastrar usuário", e);
+            throw new DBException("Erro ao criar usuário", e);
         } finally {
             try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conexao != null) {
-                    conexao.close();
-                }
+                if (stmt != null) stmt.close();
+                if (conexao != null) conexao.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -85,26 +85,12 @@ public class OracleUsuarioDao implements UsuarioDao {
         
         try {
             conexao = ConnectionManager.getInstance().getConnection();
-            String sql = "UPDATE FINTECH_USUARIOS SET EMAIL = ?, TIPO_USUARIO = ?";
-            
-            // Se uma nova senha foi fornecida, inclui ela na atualização
-            if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
-                sql += ", SENHA = ?";
-            }
-            
-            sql += " WHERE ID = ?";
-            
+            String sql = "UPDATE FINTECH_USUARIOS SET EMAIL = ?, SENHA = ?, TIPO_USUARIO = ? WHERE ID = ?";
             stmt = conexao.prepareStatement(sql);
             stmt.setString(1, usuario.getEmail());
-            stmt.setString(2, usuario.getTipoUsuario());
-            
-            if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
-                stmt.setString(3, usuario.getSenha());
-                stmt.setLong(4, usuario.getId());
-            } else {
-                stmt.setLong(3, usuario.getId());
-            }
-            
+            stmt.setString(2, usuario.getSenha());
+            stmt.setString(3, usuario.getTipoUsuario());
+            stmt.setLong(4, usuario.getId());
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -112,12 +98,8 @@ public class OracleUsuarioDao implements UsuarioDao {
             throw new DBException("Erro ao atualizar usuário", e);
         } finally {
             try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conexao != null) {
-                    conexao.close();
-                }
+                if (stmt != null) stmt.close();
+                if (conexao != null) conexao.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -234,5 +216,41 @@ public class OracleUsuarioDao implements UsuarioDao {
             }
         }
         return lista;
+    }
+
+    @Override
+    public Usuario buscarPorEmail(String email) throws DBException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Usuario usuario = null;
+
+        try {
+            conexao = ConnectionManager.getInstance().getConnection();
+            String sql = "SELECT * FROM FINTECH_USUARIOS WHERE EMAIL = ?";
+            stmt = conexao.prepareStatement(sql);
+            stmt.setString(1, email);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                usuario = new Usuario();
+                usuario.setId(rs.getLong("ID"));
+                usuario.setEmail(rs.getString("EMAIL"));
+                usuario.setSenha(rs.getString("SENHA"));
+                usuario.setTipoUsuario(rs.getString("TIPO_USUARIO"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DBException("Erro ao buscar usuário por email", e);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conexao != null) conexao.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return usuario;
     }
 }
