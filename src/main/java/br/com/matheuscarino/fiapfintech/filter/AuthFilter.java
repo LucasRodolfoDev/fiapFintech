@@ -50,7 +50,7 @@ public class AuthFilter implements Filter {
         // Permissões específicas para cada tipo de usuário
         if (tipoUsuario.equals("cliente")) {
             // Cliente só pode acessar suas próprias informações
-            if (path.startsWith("/clientes") || path.startsWith("/contas")) {
+            if (path.startsWith("/clientes")) {
                 String idParam = request.getParameter("id");
                 if (idParam != null) {
                     Long id = Long.parseLong(idParam);
@@ -61,6 +61,7 @@ public class AuthFilter implements Filter {
                     }
                 }
             }
+            // Para contas, a verificação é feita no ContaServlet
         }
 
         chain.doFilter(request, response);

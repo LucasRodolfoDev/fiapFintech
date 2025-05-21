@@ -77,18 +77,23 @@ public class ContaServlet extends HttpServlet {
 
         // Clientes só podem ver e editar suas próprias contas
         if (tipoUsuario.equals("cliente")) {
-            if (acao.equals("editar") || acao.equals("remover")) {
+            // Para ações que requerem verificação de propriedade da conta
+            if (acao.equals("editar") || acao.equals("remover") || acao.equals("abrir-form-edicao")) {
                 String idParam = req.getParameter("id");
                 if (idParam != null) {
                     try {
                         Long id = Long.parseLong(idParam);
                         Conta conta = dao.buscar(id.intValue());
-                        if (conta == null || !conta.getClienteId().equals(usuarioId)) {
-                            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Acesso negado");
+                        if (conta == null) {
+                            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Conta não encontrada");
+                            return false;
+                        }
+                        if (!conta.getClienteId().equals(usuarioId)) {
+                            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Acesso negado: você não tem permissão para acessar esta conta");
                             return false;
                         }
                     } catch (DBException e) {
-                        resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Acesso negado");
+                        resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro ao verificar permissões");
                         return false;
                     }
                 }
