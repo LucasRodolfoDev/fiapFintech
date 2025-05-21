@@ -58,8 +58,7 @@
                         <option value="${conta.id}">
                             ${cliente.nome} - 
                             Conta ${conta.id} - 
-                            ${conta.tipoConta == 1 ? 'Corrente' : 'Poupança'} - 
-                            Saldo: R$ ${conta.saldo}
+                            ${conta.tipoConta == 1 ? 'Corrente' : 'Poupança'}
                         </option>
                     </c:forEach>
                 </select>
