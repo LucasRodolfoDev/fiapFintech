@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter("/*")
+// @WebFilter("/*") - Disabled to avoid conflicts with AuthFilter
 public class LoginFilter implements Filter {
 
     @Override
@@ -17,7 +17,8 @@ public class LoginFilter implements Filter {
         String url = httpRequest.getRequestURL().toString();
 
         if (session.getAttribute("usuario") == null && !url.endsWith("login") && 
-            !url.contains("resources") && !url.contains("home.jsp") && !url.endsWith("cadastro") && !url.endsWith("cadastro.jsp")) {
+            !url.contains("resources") && !url.contains("home.jsp") && !url.endsWith("cadastro") && 
+            !url.endsWith("cadastro.jsp") && !url.endsWith("/") && !url.endsWith("index.jsp")) {
             request.setAttribute("erro", "Entre com o usuário e senha!");
             request.getRequestDispatcher("home.jsp").forward(request, response);
         } else {
