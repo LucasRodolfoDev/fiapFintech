@@ -18,6 +18,9 @@
                             <a class="nav-link" href="contas?acao=listar">Listar Contas</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="transferencia?acao=abrir-form">Transferência</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="cadastrar-cliente.jsp">Cadastro de Cliente</a>
                         </li>
                         <li class="nav-item">
@@ -33,6 +36,9 @@
                     <c:when test="${sessionScope.tipoUsuario == 'cliente'}">
                         <li class="nav-item">
                             <a class="nav-link" href="contas?acao=listar">Minhas Contas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="transferencia?acao=abrir-form">Transferência</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="clientes?acao=abrir-form-edicao&id=${sessionScope.usuarioId}">Meu Cadastro</a>

@@ -76,7 +76,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>ID Cliente</th>
+                            <th>Cliente</th>
                             <th>Tipo de Conta</th>
                             <th>Saldo</th>
                             <th>Status</th>
@@ -89,7 +89,7 @@
                         <c:forEach items="${contas}" var="conta">
                             <tr>
                                 <td>${conta.id}</td>
-                                <td>${conta.clienteId}</td>
+                                <td>${clientesMap[conta.clienteId].nome}</td>
                                 <td>${conta.tipoConta == 1 ? 'Corrente' : 'Poupança'}</td>
                                 <td>R$ ${conta.saldo}</td>
                                 <td>${conta.status ? 'Ativa' : 'Inativa'}</td>
