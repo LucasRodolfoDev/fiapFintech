@@ -30,15 +30,19 @@ public class ConnectionManager {
         Connection connection = null;
         try {
             System.out.println("Tentando conectar ao banco de dados...");
-            // System.out.println("URL: " + URL);
-            // System.out.println("USER: " + USER);
+            System.out.println("URL: " + URL);
+            System.out.println("USER: " + USER);
+            // Password not printed for security reasons
 
             Class.forName("oracle.jdbc.driver.OracleDriver");
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Conexão estabelecida com sucesso");
         } catch (ClassNotFoundException e) {
+            System.out.println("Erro: Driver Oracle JDBC não encontrado");
             throw new SQLException("Driver Oracle JDBC não encontrado", e);
         } catch (SQLException e) {
+            System.out.println("Erro ao conectar ao banco de dados: " + e.getMessage());
+            System.out.println("Verifique se as credenciais e URL do banco estão corretas no arquivo .env");
             throw new SQLException("Erro ao conectar ao banco de dados: " + e.getMessage(), e);
         } 
         return connection;
