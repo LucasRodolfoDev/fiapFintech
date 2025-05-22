@@ -16,7 +16,7 @@ O Fintech é uma aplicação web desenvolvida para gerenciamento financeiro pess
 
 1. Clone o repositório:
    ```
-   git clone https://github.com/matheuscarino/fiapFintech.git
+   git clone https://github.com/LucasRodolfoDev/fiapFintech.git
    ```
 
 2. Navegue até o diretório do projeto:
